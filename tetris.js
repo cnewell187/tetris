@@ -15,14 +15,70 @@ var defaultSpeed = 65;
 var currentSpeed = 65;
 var teeState = "TransA"
 
-var zigPos =[{
+var rightLegPos = [{
+    x: xMid,
+    y: 2
+}, {
     x: xMid,
     y: 1
 }, {
-    x: xMid+1,
+    x: xMid,
+    y: 0
+}, {
+    x: xMid - 1,
+    y: 2
+}, ];
+
+var leftLegPos = [{
+    x: xMid,
+    y: 2
+}, {
+    x: xMid,
     y: 1
 }, {
-    x: xMid+1,
+    x: xMid,
+    y: 0
+}, {
+    x: xMid + 1,
+    y: 2
+}, ];
+
+var squarePos = [{
+    x: xMid,
+    y: 1
+}, {
+    x: xMid + 1,
+    y: 1
+}, {
+    x: xMid + 1,
+    y: 0
+}, {
+    x: xMid,
+    y: 0
+}, ];
+
+var zigPos = [{
+    x: xMid,
+    y: 1
+}, {
+    x: xMid + 1,
+    y: 1
+}, {
+    x: xMid + 1,
+    y: 0
+}, {
+    x: xMid,
+    y: 2
+}, ];
+
+var zagPos = [{
+    x: xMid,
+    y: 1
+}, {
+    x: xMid - 1,
+    y: 1
+}, {
+    x: xMid - 1,
     y: 0
 }, {
     x: xMid,
@@ -33,13 +89,13 @@ var longPos = [{
     x: xMid,
     y: 1
 }, {
-    x: xMid-1,
+    x: xMid - 1,
     y: 1
 }, {
-    x: xMid+1,
+    x: xMid + 1,
     y: 1
 }, {
-    x: xMid+2,
+    x: xMid + 2,
     y: 1
 }, ];
 
@@ -66,16 +122,59 @@ var fallenBlocks = [{
 }, {
     x: xMid - 1,
     y: 22,
-}, ]
+}, ];
 
 tee = {
+    name: 'tee',
     color: 'purple',
+    state: "TransA",
     position: JSON.parse(JSON.stringify(teePos)),
-}
+};
 
-long={
-  color:'blue'
-  position: JSON.parse(JSON.stringify(longPos)),
+long = {
+    name: 'long',
+    color: 'blue',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(longPos)),
+};
+zig = {
+    name: "zig",
+    color: 'green',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(zigPos)),
+};
+zag = {
+    name: "zag",
+    color: 'red',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(zagPos)),
+};
+rightLeg = {
+    name: "rightLeg",
+    color: '#059B9F',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(rightLegPos)),
+};
+leftLeg = {
+    name: "leftLeg",
+    color: '#ff1493',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(leftLegPos)),
+};
+square = {
+    name: "square",
+    color: 'orange',
+    state: "TransA",
+    position: JSON.parse(JSON.stringify(squarePos)),
+};
+
+var shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
+    JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
+    JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
+];
+
+function random7int() {
+    return Math.floor(Math.random() * (7 - 1 + 1)) + 1;
 }
 
 function landScape() {
@@ -89,12 +188,12 @@ function landScape() {
 
 function fall() {
 
-  //
+    //
 
-  if (this.speed === this.go)
+    if (this.speed === this.go)
         for (var i = 0; i < this.position.length; i++) {
             this.position[i].y++
-            this.speed = currentSpeed;
+                this.speed = currentSpeed;
         }
     else {
         this.speed++;
@@ -132,77 +231,281 @@ function control() {
             landScape();
             activeSquare.render();
             activeSquare.collision();
-                    }
+        }
 
         if (event.keyCode == 38) {
+            rotate();
 
-            switch (teeState) {
-
-                case "TransA":
-
-                    activeSquare.position[1].x = activeSquare.position[0].x + 1
-                    activeSquare.position[1].y = activeSquare.position[0].y
-
-                    activeSquare.position[2].x = activeSquare.position[0].x
-                    activeSquare.position[2].y = activeSquare.position[0].y + 1
-
-                    activeSquare.position[3].x = activeSquare.position[0].x
-                    activeSquare.position[3].y = activeSquare.position[0].y - 1
-                    teeState = "TransB"
-                    landScape();
-                    activeSquare.render();
-                    activeSquare.collision();
-                    break;
-
-                case "TransB":
-                    activeSquare.position[1].x = activeSquare.position[0].x
-                    activeSquare.position[1].y = activeSquare.position[0].y + 1
-
-                    activeSquare.position[2].x = activeSquare.position[0].x - 1
-                    activeSquare.position[2].y = activeSquare.position[0].y
-
-                    activeSquare.position[3].x = activeSquare.position[0].x + 1
-                    activeSquare.position[3].y = activeSquare.position[0].y
-                    teeState = "TransC"
-                    landScape();
-                    activeSquare.render();
-                    activeSquare.collision();
-                    break;
-                case "TransC":
-                    activeSquare.position[1].x = activeSquare.position[0].x - 1
-                    activeSquare.position[1].y = activeSquare.position[0].y
-
-                    activeSquare.position[2].x = activeSquare.position[0].x
-                    activeSquare.position[2].y = activeSquare.position[0].y - 1
-
-                    activeSquare.position[3].x = activeSquare.position[0].x
-                    activeSquare.position[3].y = activeSquare.position[0].y + 1
-                    teeState = "TransD"
-                    landScape();
-                    activeSquare.render();
-                    activeSquare.collision();
-                    break;
-                case "TransD":
-                    activeSquare.position[1].x = activeSquare.position[0].x
-                    activeSquare.position[1].y = activeSquare.position[0].y - 1
-
-                    activeSquare.position[2].x = activeSquare.position[0].x + 1
-                    activeSquare.position[2].y = activeSquare.position[0].y
-
-                    activeSquare.position[3].x = activeSquare.position[0].x - 1
-                    activeSquare.position[3].y = activeSquare.position[0].y
-                    teeState = "TransA"
-                    landScape();
-                    activeSquare.render();
-                    activeSquare.collision();
-                    break;
-            }
+            // switch (activeSquare.state) {
+            //
+            //     case "TransA":
+            //
+            //         activeSquare.position[1].x = activeSquare.position[0].x + 1
+            //         activeSquare.position[1].y = activeSquare.position[0].y
+            //
+            //         activeSquare.position[2].x = activeSquare.position[0].x
+            //         activeSquare.position[2].y = activeSquare.position[0].y + 1
+            //
+            //         activeSquare.position[3].x = activeSquare.position[0].x
+            //         activeSquare.position[3].y = activeSquare.position[0].y - 1
+            //         activeSquare.state = "TransB"
+            //         landScape();
+            //         activeSquare.render();
+            //         activeSquare.collision();
+            //         break;
+            //
+            //     case "TransB":
+            //         activeSquare.position[1].x = activeSquare.position[0].x
+            //         activeSquare.position[1].y = activeSquare.position[0].y + 1
+            //
+            //         activeSquare.position[2].x = activeSquare.position[0].x - 1
+            //         activeSquare.position[2].y = activeSquare.position[0].y
+            //
+            //         activeSquare.position[3].x = activeSquare.position[0].x + 1
+            //         activeSquare.position[3].y = activeSquare.position[0].y
+            //         activeSquare.state = "TransC"
+            //         landScape();
+            //         activeSquare.render();
+            //         activeSquare.collision();
+            //         break;
+            //     case "TransC":
+            //         activeSquare.position[1].x = activeSquare.position[0].x - 1
+            //         activeSquare.position[1].y = activeSquare.position[0].y
+            //
+            //         activeSquare.position[2].x = activeSquare.position[0].x
+            //         activeSquare.position[2].y = activeSquare.position[0].y - 1
+            //
+            //         activeSquare.position[3].x = activeSquare.position[0].x
+            //         activeSquare.position[3].y = activeSquare.position[0].y + 1
+            //         activeSquare.state = "TransD"
+            //         landScape();
+            //         activeSquare.render();
+            //         activeSquare.collision();
+            //         break;
+            //     case "TransD":
+            //         activeSquare.position[1].x = activeSquare.position[0].x
+            //         activeSquare.position[1].y = activeSquare.position[0].y - 1
+            //
+            //         activeSquare.position[2].x = activeSquare.position[0].x + 1
+            //         activeSquare.position[2].y = activeSquare.position[0].y
+            //
+            //         activeSquare.position[3].x = activeSquare.position[0].x - 1
+            //         activeSquare.position[3].y = activeSquare.position[0].y
+            //         activeSquare.state = "TransA"
+            //         landScape();
+            //         activeSquare.render();
+            //         activeSquare.collision();
+            //         break;
+            // }
 
         }
     }
 }
 
+function rotate() {
+    switch (activeSquare.name) {
+        case "tee":
+            rotateTee();
+            break;
+        case "long":
+            rotateLong();
+            break;
+        case "zig":
+            rotateZig();
+            break;
+        case "zag":
+            rotateZag();
+            break;
+        case "square":
+            break;
+        case "leftLeg":
+            rotateLeftLeg();
+            break;
+        case "rightLeg":
+            rotateRightLeg();
+            break;
+    }
 
+};
+
+function rotateTee() {
+    switch (activeSquare.state) {
+
+        case "TransA":
+
+            activeSquare.position[1].x = activeSquare.position[0].x + 1
+            activeSquare.position[1].y = activeSquare.position[0].y
+
+            activeSquare.position[2].x = activeSquare.position[0].x
+            activeSquare.position[2].y = activeSquare.position[0].y + 1
+
+            activeSquare.position[3].x = activeSquare.position[0].x
+            activeSquare.position[3].y = activeSquare.position[0].y - 1
+            activeSquare.state = "TransB"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+        case "TransB":
+            activeSquare.position[1].x = activeSquare.position[0].x
+            activeSquare.position[1].y = activeSquare.position[0].y + 1
+
+            activeSquare.position[2].x = activeSquare.position[0].x - 1
+            activeSquare.position[2].y = activeSquare.position[0].y
+
+            activeSquare.position[3].x = activeSquare.position[0].x + 1
+            activeSquare.position[3].y = activeSquare.position[0].y
+            activeSquare.state = "TransC"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+        case "TransC":
+            activeSquare.position[1].x = activeSquare.position[0].x - 1
+            activeSquare.position[1].y = activeSquare.position[0].y
+
+            activeSquare.position[2].x = activeSquare.position[0].x
+            activeSquare.position[2].y = activeSquare.position[0].y - 1
+
+            activeSquare.position[3].x = activeSquare.position[0].x
+            activeSquare.position[3].y = activeSquare.position[0].y + 1
+            activeSquare.state = "TransD"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+        case "TransD":
+            activeSquare.position[1].x = activeSquare.position[0].x
+            activeSquare.position[1].y = activeSquare.position[0].y - 1
+
+            activeSquare.position[2].x = activeSquare.position[0].x + 1
+            activeSquare.position[2].y = activeSquare.position[0].y
+
+            activeSquare.position[3].x = activeSquare.position[0].x - 1
+            activeSquare.position[3].y = activeSquare.position[0].y
+            activeSquare.state = "TransA"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+    }
+
+};
+
+function rotateLong() {
+    switch (activeSquare.state) {
+
+        case "TransA":
+
+            activeSquare.position[1].x = activeSquare.position[0].x
+            activeSquare.position[1].y = activeSquare.position[0].y+1
+
+            activeSquare.position[2].x = activeSquare.position[0].x
+            activeSquare.position[2].y = activeSquare.position[0].y+2
+
+            activeSquare.position[3].x = activeSquare.position[0].x
+            activeSquare.position[3].y = activeSquare.position[0].y-1
+            activeSquare.state = "TransB"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+        case "TransB":
+            activeSquare.position[1].x = activeSquare.position[0].x+1
+            activeSquare.position[1].y = activeSquare.position[0].y
+
+            activeSquare.position[2].x = activeSquare.position[0].x+2
+            activeSquare.position[2].y = activeSquare.position[0].y
+
+            activeSquare.position[3].x = activeSquare.position[0].x-1
+            activeSquare.position[3].y = activeSquare.position[0].y
+            activeSquare.state = "TransA"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+    }
+
+};
+
+function rotateZig() {
+    switch (activeSquare.state) {
+
+        case "TransA":
+
+            activeSquare.position[1].x = activeSquare.position[0].x
+            activeSquare.position[1].y = activeSquare.position[0].y-1
+
+            activeSquare.position[2].x = activeSquare.position[0].x-1
+            activeSquare.position[2].y = activeSquare.position[0].y-1
+
+            activeSquare.position[3].x = activeSquare.position[0].x+1
+            activeSquare.position[3].y = activeSquare.position[0].y
+            activeSquare.state = "TransB"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+        case "TransB":
+        activeSquare.position[1].x = activeSquare.position[0].x+1
+        activeSquare.position[1].y = activeSquare.position[0].y
+
+        activeSquare.position[2].x = activeSquare.position[0].x+1
+        activeSquare.position[2].y = activeSquare.position[0].y-1
+
+        activeSquare.position[3].x = activeSquare.position[0].x
+        activeSquare.position[3].y = activeSquare.position[0].y+1
+            activeSquare.state = "TransA"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+    }
+
+};
+
+function rotateZag() {
+    switch (activeSquare.state) {
+
+        case "TransA":
+
+            activeSquare.position[1].x = activeSquare.position[0].x
+            activeSquare.position[1].y = activeSquare.position[0].y-1
+
+            activeSquare.position[2].x = activeSquare.position[0].x+1
+            activeSquare.position[2].y = activeSquare.position[0].y-1
+
+            activeSquare.position[3].x = activeSquare.position[0].x-1
+            activeSquare.position[3].y = activeSquare.position[0].y
+            activeSquare.state = "TransB"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+        case "TransB":
+            activeSquare.position[1].x = activeSquare.position[0].x-1
+            activeSquare.position[1].y = activeSquare.position[0].y
+
+            activeSquare.position[2].x = activeSquare.position[0].x-1
+            activeSquare.position[2].y = activeSquare.position[0].y-1
+
+            activeSquare.position[3].x = activeSquare.position[0].x
+            activeSquare.position[3].y = activeSquare.position[0].y+1
+            activeSquare.state = "TransA"
+            landScape();
+            activeSquare.render();
+            activeSquare.collision();
+            break;
+
+    }
+
+};
 
 
 
@@ -213,6 +516,8 @@ function blockCreate(shapeType) {
     this.color = shapeType.color; //will change later
     this.speed = currentSpeed;
     this.go = 100;
+    this.name = shapeType.name;
+    this.state = shapeType.state;
     this.active = true;
     this.render = function() {
         for (var i = 0; i < this.position.length; i++) {
@@ -229,9 +534,9 @@ function blockCreate(shapeType) {
             for (var j = 0; j < fallenBlocks.length; j++)
                 if ((this.position[i].y === fallenBlocks[j].y - 1 &&
                         this.position[i].x === fallenBlocks[j].x) ||
-                    (this.position[i].y === 22) ) {
+                    (this.position[i].y === 22)) {
                     this.active = false;
-                    teeState = "TransA"
+                    //teeState = "TransA"
                     //activeSquare = blockCreate(tee);
                     for (var k = 0; k < this.position.length; k++) {
                         fallenBlocks.push(this.position[k]);
@@ -255,14 +560,16 @@ function update() {
         activeSquare.fall();
         activeSquare.control();
         activeSquare.collision();
-    }
-    else {
-      //reset shape function
-        tee = {
-            color: 'purple',
-            position: JSON.parse(JSON.stringify(teePos)),
-        }
-        activeSquare = blockCreate(tee);
+    } else {
+        //reset shape function
+        shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
+            JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
+            JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
+        ];
+        var rando = random7int();
+        console.log(rando);
+        activeSquare = blockCreate(shapeArray[rando - 1]);
+
     }
 
 }
