@@ -17,112 +17,131 @@ var teeState = "TransA"
 
 var rightLegPos = [{
     x: xMid,
-    y: 2
+    y: 2,
+    color: '#059B9F',
 }, {
     x: xMid,
-    y: 1
+    y: 1,
+    color: '#059B9F',
 }, {
     x: xMid,
-    y: 0
+    y: 0,
+    color: '#059B9F',
 }, {
     x: xMid - 1,
-    y: 2
+    y: 2,
+    color: '#059B9F',
 }, ];
 
 var leftLegPos = [{
     x: xMid,
-    y: 2
+    y: 2,
+    color: '#ff1493',
 }, {
     x: xMid,
-    y: 1
+    y: 1,
+    color: '#ff1493',
 }, {
     x: xMid,
-    y: 0
+    y: 0,
+    color: '#ff1493',
 }, {
     x: xMid + 1,
-    y: 2
+    y: 2,
+    color: '#ff1493',
 }, ];
 
 var squarePos = [{
     x: xMid,
-    y: 1
+    y: 1,
+    color: 'orange',
 }, {
     x: xMid + 1,
-    y: 1
+    y: 1,
+    color: 'orange',
 }, {
     x: xMid + 1,
-    y: 0
+    y: 0,
+    color: 'orange',
 }, {
     x: xMid,
-    y: 0
+    y: 0,
+    color: 'orange',
 }, ];
 
 var zigPos = [{
     x: xMid,
-    y: 1
+    y: 1,
+    color: 'green',
 }, {
     x: xMid + 1,
-    y: 1
+    y: 1,
+    color: 'green',
 }, {
     x: xMid + 1,
-    y: 0
+    y: 0,
+    color: 'green',
 }, {
     x: xMid,
-    y: 2
+    y: 2,
+    color: 'green',
 }, ];
 
 var zagPos = [{
     x: xMid,
-    y: 1
+    y: 1,
+    color: 'red',
 }, {
     x: xMid - 1,
-    y: 1
+    y: 1,
+    color: 'red',
 }, {
     x: xMid - 1,
-    y: 0
+    y: 0,
+    color: 'red',
 }, {
     x: xMid,
-    y: 2
+    y: 2,
+    color: 'red',
 }, ];
 
 var longPos = [{
     x: xMid,
-    y: 1
+    y: 1,
+    color: 'blue',
 }, {
     x: xMid - 1,
-    y: 1
+    y: 1,
+    color: 'blue',
 }, {
     x: xMid + 1,
-    y: 1
+    y: 1,
+    color: 'blue',
 }, {
     x: xMid + 2,
-    y: 1
+    y: 1,
+    color: 'blue',
 }, ];
 
 var teePos = [{
     x: xMid,
-    y: 1
+    y: 1,
+    color: 'purple',
 }, {
     x: xMid - 1,
-    y: 1
+    y: 1,
+    color: 'purple',
 }, {
     x: xMid + 1,
-    y: 1
+    y: 1,
+    color: 'purple',
 }, {
     x: xMid,
-    y: 0
+    y: 0,
+    color: 'purple',
 }, ];
 
-var fallenBlocks = [{
-    x: xMid,
-    y: 22,
-}, {
-    x: xMid + 1,
-    y: 22,
-}, {
-    x: xMid - 1,
-    y: 22,
-}, ];
+var fallenBlocks = [{}, ];
 
 tee = {
     name: 'tee',
@@ -183,13 +202,23 @@ function landScape() {
     ctx.fillRect(0, 0, gameWidth, gameHeight);
 
     //side walls
-    ctx.fillStyle = "gray";
+    ctx.fillStyle = "black";
     ctx.fillRect(0, 0, 120, 460)
     ctx.fillRect(320, 0, 140, 460)
+    var grd = ctx.createLinearGradient(0, 460, 0, 0);
+    grd.addColorStop(0, "black");
+    grd.addColorStop(1, "gray");
+
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, 120, 460)
+    ctx.fillRect(320, 0, 140, 460)
+
     blockClearCheck();
     for (var i = 0; i < fallenBlocks.length; i++) {
         ctx.fillStyle = "black";
         ctx.fillRect(fallenBlocks[i].x * blockSize, fallenBlocks[i].y * blockSize, blockSize, blockSize);
+        ctx.fillStyle = fallenBlocks[i].color;
+        ctx.fillRect(fallenBlocks[i].x * blockSize, fallenBlocks[i].y * blockSize, blockSize - 1, blockSize - 1);
     };
 }
 
@@ -746,7 +775,10 @@ function rotateZag() {
 };
 
 
-
+function sleep(delay){
+  var start = new Date().getTime();
+  while (new Date().getTime() < start + delay);
+}
 
 function blockCreate(shapeType) {
     // var shapeCopy = Object.assign({}, shapeType)
@@ -759,8 +791,10 @@ function blockCreate(shapeType) {
     this.active = true;
     this.render = function() {
         for (var i = 0; i < this.position.length; i++) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize, blockSize);
             ctx.fillStyle = this.color;
-            ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize, blockSize);
+            ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize-1, blockSize-1);
         };
     }
 
@@ -849,18 +883,14 @@ function blockClearCheck() {
             }
         }
         if (count > 9) {
-            console.log(activeSquare.name + "is clearing")
-            console.log("CLEAR!")
-
-
-
+            
             fallenBlocks = fallenBlocks.filter(function(item) {
                 return item.y != i;
             })
 
             for (var j = 0; j < fallenBlocks.length; j++) {
 
-                if (fallenBlocks[j].y <i) {
+                if (fallenBlocks[j].y < i) {
                     fallenBlocks[j].y = fallenBlocks[j].y + 1;
                 }
             }
