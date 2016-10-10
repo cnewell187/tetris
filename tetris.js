@@ -1,3 +1,4 @@
+var score = 0;
 var long;
 var tee;
 var zig;
@@ -8,7 +9,7 @@ var square;
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 var blockSize = 20;
-var xMid = 12;
+var xMid = 11;
 var gameHeight = 460;
 var gameWidth = 460;
 var defaultSpeed = 65;
@@ -202,9 +203,9 @@ function landScape() {
     ctx.fillRect(0, 0, gameWidth, gameHeight);
 
     //side walls
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 0, 120, 460)
-    ctx.fillRect(320, 0, 140, 460)
+    // ctx.fillStyle = "black";
+    // ctx.fillRect(0, 0, 120, 460)
+    // ctx.fillRect(320, 0, 140, 460)
     var grd = ctx.createLinearGradient(0, 460, 0, 0);
     grd.addColorStop(0, "black");
     grd.addColorStop(1, "gray");
@@ -213,7 +214,24 @@ function landScape() {
     ctx.fillRect(0, 0, 120, 460)
     ctx.fillRect(320, 0, 140, 460)
 
+
+    ctx.fillStyle = "black";
+    ctx.fillRect(17 * blockSize - 1, 1 * blockSize - 1, blockSize * 6, blockSize * 5);
+    ctx.fillStyle = "white";
+    ctx.fillRect(17 * blockSize, 1 * blockSize, blockSize * 6 - 2, blockSize * 5 - 2);
+    ctx.fillStyle = "black";
+    ctx.font = "20px Georgia";
+    ctx.fillText("Score: " + score, 370, 160);
+
+    for (var i = 0; i < nextShape.position.length; i++) {
+        ctx.fillStyle = "black";
+        ctx.fillRect((nextShape.position[i].x + 8) * blockSize, (nextShape.position[i].y + 2) * blockSize, blockSize, blockSize);
+        ctx.fillStyle = nextShape.color;
+        ctx.fillRect((nextShape.position[i].x + 8) * blockSize, (nextShape.position[i].y + 2) * blockSize, blockSize - 1, blockSize - 1);
+    };
+
     blockClearCheck();
+
     for (var i = 0; i < fallenBlocks.length; i++) {
         ctx.fillStyle = "black";
         ctx.fillRect(fallenBlocks[i].x * blockSize, fallenBlocks[i].y * blockSize, blockSize, blockSize);
@@ -775,9 +793,9 @@ function rotateZag() {
 };
 
 
-function sleep(delay){
-  var start = new Date().getTime();
-  while (new Date().getTime() < start + delay);
+function sleep(delay) {
+    var start = new Date().getTime();
+    while (new Date().getTime() < start + delay);
 }
 
 function blockCreate(shapeType) {
@@ -791,10 +809,10 @@ function blockCreate(shapeType) {
     this.active = true;
     this.render = function() {
         for (var i = 0; i < this.position.length; i++) {
-          ctx.fillStyle = "black";
-          ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize, blockSize);
+            ctx.fillStyle = "black";
+            ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize, blockSize);
             ctx.fillStyle = this.color;
-            ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize-1, blockSize-1);
+            ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize - 1, blockSize - 1);
         };
     }
 
@@ -834,6 +852,8 @@ function blockCreate(shapeType) {
 }
 var rando1 = random7int();
 var activeSquare = blockCreate(shapeArray[rando1 - 1]);
+var rando2 = random7int();
+var nextShape = shapeArray[rando2 - 1]
 
 function update() {
     landScape();
@@ -853,10 +873,10 @@ function update() {
             JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
         ];
 
+
+        activeSquare = blockCreate(nextShape);
         var rando = random7int();
-        // console.log(rando);
-        console.log("New Shape: " + shapeArray[rando - 1].name)
-        activeSquare = blockCreate(shapeArray[rando - 1]);
+        nextShape = shapeArray[rando - 1]
 
     }
 
@@ -873,6 +893,8 @@ function getRandomColor() {
     return color;
 }
 
+
+
 function blockClearCheck() {
 
     for (var i = 22; i >= 0; i--) {
@@ -883,7 +905,22 @@ function blockClearCheck() {
             }
         }
         if (count > 9) {
-            
+
+
+
+            for (var j = 0; j < fallenBlocks.length; j++) {
+                ctx.fillStyle = "black";
+                ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize, blockSize);
+                ctx.fillStyle = getRandomColor();
+                ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize - 1, blockSize - 1);
+                console.log("WHAT IT DO!!")
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, gameWidth, gameHeight);
+            }
+
+
+            score = score + 10;
+            // sleep(1000);
             fallenBlocks = fallenBlocks.filter(function(item) {
                 return item.y != i;
             })
@@ -897,8 +934,10 @@ function blockClearCheck() {
 
             count = 0;
 
+
         }
     }
+    
 };
 
 
