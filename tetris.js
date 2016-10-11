@@ -15,6 +15,7 @@ var gameWidth = 460;
 var defaultSpeed = 65;
 var currentSpeed = 80;
 var teeState = "TransA"
+var gameId;
 
 var rightLegPos = [{
     x: xMid,
@@ -223,6 +224,7 @@ function landScape() {
     ctx.font = "20px Georgia";
     ctx.fillText("Score: " + score, 370, 160);
 
+
     for (var i = 0; i < nextShape.position.length; i++) {
         ctx.fillStyle = "black";
         ctx.fillRect((nextShape.position[i].x + 8) * blockSize, (nextShape.position[i].y + 2) * blockSize, blockSize, blockSize);
@@ -230,7 +232,7 @@ function landScape() {
         ctx.fillRect((nextShape.position[i].x + 8) * blockSize, (nextShape.position[i].y + 2) * blockSize, blockSize - 1, blockSize - 1);
     };
 
-    blockClearCheck();
+
 
     for (var i = 0; i < fallenBlocks.length; i++) {
         ctx.fillStyle = "black";
@@ -245,6 +247,7 @@ function fall() {
     if (this.speed === this.go)
         for (var i = 0; i < this.position.length; i++) {
             this.position[i].y++
+
                 this.speed = currentSpeed;
         }
     else {
@@ -295,8 +298,28 @@ function control() {
         }
         if (event.keyCode == 40 && activeSquare.active === true) {
             // moves down
+
+            for (var i = 0; i < activeSquare.position.length; i++) {
+                if (activeSquare.position[i].y >= 22) {
+                    console.log("can't move down")
+
+                    return;
+                }
+                for (var j = 0; j < fallenBlocks.length; j++) {
+                    if (activeSquare.position[i].x === fallenBlocks[j].x &&
+                        activeSquare.position[i].y === fallenBlocks[j].y - 1) {
+                        console.log("can't move down")
+
+                        return;
+                    }
+                }
+            }
+
             for (var i = 0; i < activeSquare.position.length; i++) {
                 activeSquare.position[i].y++
+
+
+
             }
         }
 
@@ -380,9 +403,6 @@ function rotateTee() {
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransC"
 
-
-
-
             break;
         case "TransC":
             activeSquare.position[1].x = activeSquare.position[0].x - 1
@@ -394,9 +414,6 @@ function rotateTee() {
             activeSquare.position[3].x = activeSquare.position[0].x
             activeSquare.position[3].y = activeSquare.position[0].y + 1
             activeSquare.state = "TransD"
-
-
-
 
             break;
         case "TransD":
@@ -418,9 +435,6 @@ function rotateTee() {
             activeSquare.position[3].x = activeSquare.position[0].x - 1
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransA"
-
-
-
 
             break;
     }
@@ -454,9 +468,6 @@ function rotateLeftLeg() {
             activeSquare.position[3].y = activeSquare.position[0].y + 1
             activeSquare.state = "TransB"
 
-
-
-
             console.log("Trans to B")
             break;
 
@@ -474,9 +485,6 @@ function rotateLeftLeg() {
             activeSquare.position[3].x = activeSquare.position[0].x - 1
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransC"
-
-
-
 
             console.log("Trans to C")
             break;
@@ -503,9 +511,6 @@ function rotateLeftLeg() {
             activeSquare.position[3].y = activeSquare.position[0].y - 1
             activeSquare.state = "TransD"
 
-
-
-
             console.log("Trans to D")
             break;
         case "TransD":
@@ -521,9 +526,6 @@ function rotateLeftLeg() {
             activeSquare.position[3].x = activeSquare.position[0].x + 1
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransA"
-
-
-
 
             console.log("Trans to A")
             break;
@@ -558,16 +560,12 @@ function rotateRightLeg() {
             activeSquare.position[3].y = activeSquare.position[0].y - 1
             activeSquare.state = "TransB"
 
-
-
-
             console.log("Trans to B")
             break;
 
         case "TransB":
             activeSquare.position[0].x = activeSquare.position[0].x + 1
             activeSquare.position[0].y = activeSquare.position[0].y - 1
-
 
             activeSquare.position[1].x = activeSquare.position[0].x
             activeSquare.position[1].y = activeSquare.position[0].y + 1
@@ -578,9 +576,6 @@ function rotateRightLeg() {
             activeSquare.position[3].x = activeSquare.position[0].x + 1
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransC"
-
-
-
 
             console.log("Trans to C")
             break;
@@ -607,9 +602,6 @@ function rotateRightLeg() {
             activeSquare.position[3].y = activeSquare.position[0].y + 1
             activeSquare.state = "TransD"
 
-
-
-
             console.log("Trans to D")
             break;
         case "TransD":
@@ -625,9 +617,6 @@ function rotateRightLeg() {
             activeSquare.position[3].x = activeSquare.position[0].x - 1
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransA"
-
-
-
 
             console.log("Trans to A")
             break;
@@ -650,9 +639,6 @@ function rotateLong() {
             activeSquare.position[3].x = activeSquare.position[0].x
             activeSquare.position[3].y = activeSquare.position[0].y - 1
             activeSquare.state = "TransB"
-
-
-
 
             break;
 
@@ -685,9 +671,6 @@ function rotateLong() {
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransA"
 
-
-
-
             break;
 
     }
@@ -718,9 +701,6 @@ function rotateZig() {
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransB"
 
-
-
-
             break;
 
         case "TransB":
@@ -733,9 +713,6 @@ function rotateZig() {
             activeSquare.position[3].x = activeSquare.position[0].x
             activeSquare.position[3].y = activeSquare.position[0].y + 1
             activeSquare.state = "TransA"
-
-
-
 
             break;
 
@@ -767,9 +744,6 @@ function rotateZag() {
             activeSquare.position[3].y = activeSquare.position[0].y
             activeSquare.state = "TransB"
 
-
-
-
             break;
 
         case "TransB":
@@ -782,9 +756,6 @@ function rotateZag() {
             activeSquare.position[3].x = activeSquare.position[0].x
             activeSquare.position[3].y = activeSquare.position[0].y + 1
             activeSquare.state = "TransA"
-
-
-
 
             break;
 
@@ -808,6 +779,7 @@ function blockCreate(shapeType) {
     this.state = shapeType.state;
     this.active = true;
     this.render = function() {
+        console.log("rendering")
         for (var i = 0; i < this.position.length; i++) {
             ctx.fillStyle = "black";
             ctx.fillRect(this.position[i].x * blockSize, this.position[i].y * blockSize, blockSize, blockSize);
@@ -819,16 +791,23 @@ function blockCreate(shapeType) {
     this.fall = fall;
     this.control = control;
 
+    // checks if blocks are about to become fallenBlocks
     this.collision = function() {
+
         for (var i = 0; i < this.position.length; i++) {
             for (var j = 0; j < fallenBlocks.length; j++) {
                 if ((this.position[i].y === fallenBlocks[j].y - 1 &&
                         this.position[i].x === fallenBlocks[j].x) ||
                     (this.position[i].y === 22)) {
-                    this.active = false;
+
+                    this.active = false
+
+                    //appends blocks that are now locked to the falleBlock array
                     for (var k = 0; k < this.position.length; k++) {
                         fallenBlocks.push(JSON.parse(JSON.stringify(this.position[k])));
                     }
+
+                    // resets the block positions
                     long.position = JSON.parse(JSON.stringify(longPos))
                     tee.position = JSON.parse(JSON.stringify(teePos))
                     zig.position = JSON.parse(JSON.stringify(zigPos))
@@ -842,9 +821,7 @@ function blockCreate(shapeType) {
                         // ];
                     return this;
                 }
-
             }
-
         }
 
     }
@@ -856,29 +833,28 @@ var rando2 = random7int();
 var nextShape = shapeArray[rando2 - 1]
 
 function update() {
-    landScape();
 
+    landScape();
     if (activeSquare.active === true) {
+
         activeSquare.render();
         activeSquare.fall();
         activeSquare.control();
         activeSquare.collision();
+        blockClearCheck();
     } else {
-
-
+        blockClearCheck();
         //reset shape function
-
         shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
             JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
             JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
         ];
-
-
         activeSquare = blockCreate(nextShape);
         var rando = random7int();
         nextShape = shapeArray[rando - 1]
 
     }
+
 
 
 
@@ -893,7 +869,34 @@ function getRandomColor() {
     return color;
 }
 
+function colorClear(index) {
 
+  for (var j = 0; j < fallenBlocks.length; j++) {
+    if( fallenBlocks[j].y===index){
+      ctx.fillStyle = "black";
+      ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize, blockSize);
+      ctx.fillStyle = getRandomColor();
+      ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize - 1, blockSize - 1);
+      console.log("WHAT IT DO!!")
+    }
+  }
+
+}
+
+function clearBlocks(index){
+
+  fallenBlocks = fallenBlocks.filter(function(item) {
+      return item.y != index;
+  })
+
+  for (var j = 0; j < fallenBlocks.length; j++) {
+
+      if (fallenBlocks[j].y < index) {
+          fallenBlocks[j].y = fallenBlocks[j].y + 1;
+      }
+  }
+
+}
 
 function blockClearCheck() {
 
@@ -906,45 +909,41 @@ function blockClearCheck() {
         }
         if (count > 9) {
 
+            // for (var j = 0; j < fallenBlocks.length; j++) {
+            //     ctx.fillStyle = "black";
+            //     ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize, blockSize);
+            //     ctx.fillStyle = getRandomColor();
+            //     ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize - 1, blockSize - 1);
+            //     console.log("WHAT IT DO!!")
+            // }
+            setTimeout(colorClear, 100, i)
+            setTimeout(colorClear, 200, i)
+            setTimeout(colorClear, 300, i)
+            setTimeout(colorClear, 400, i)
+            setTimeout(colorClear, 500, i)
+            setTimeout(colorClear, 600, i)
+            setTimeout(colorClear, 700, i)
+            setTimeout(colorClear, 800, i)
+            setTimeout(colorClear, 900, i)
+            setTimeout(clearBlocks, 1000, i)
 
-
-            for (var j = 0; j < fallenBlocks.length; j++) {
-                ctx.fillStyle = "black";
-                ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize, blockSize);
-                ctx.fillStyle = getRandomColor();
-                ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize - 1, blockSize - 1);
-                console.log("WHAT IT DO!!")
-                ctx.fillStyle = "white";
-                ctx.fillRect(0, 0, gameWidth, gameHeight);
-            }
-
+            setTimeout(update, 1000)
 
             score = score + 10;
-            // sleep(1000);
-            fallenBlocks = fallenBlocks.filter(function(item) {
-                return item.y != i;
-            })
 
-            for (var j = 0; j < fallenBlocks.length; j++) {
 
-                if (fallenBlocks[j].y < i) {
-                    fallenBlocks[j].y = fallenBlocks[j].y + 1;
-                }
-            }
+
 
             count = 0;
-
+            return;
 
         }
     }
-    
+    setTimeout(update, 10)
+
 };
 
-
-
-
 function play() {
-    setInterval(function() {
-        update();
-    }, 10)
+
+    update();
 }
