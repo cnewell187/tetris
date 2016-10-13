@@ -16,6 +16,7 @@ var defaultSpeed = 65;
 var currentSpeed = 80;
 var shallPass = true;
 var level = 1;
+var linesCleared = 0;
 
 
 var gameId;
@@ -252,9 +253,7 @@ function fall() {
     //console.log("running fall!!")
     if (blockLocking()) {
         console.log("all stopped Up!")
-            // landScape();
-            // activeSquare.render();
-            //setTimeout(activeSquare.collision, 100);
+
         return;
     } else if (activeSquare.speed === activeSquare.go) {
         //console.log("Going!!")
@@ -278,11 +277,13 @@ function fall() {
             activeSquare.position[i].y++
                 activeSquare.speed = currentSpeed;
             landScape();
+            console.log("rendering from FAll")
             activeSquare.render();
         }
     } else {
         this.speed++;
         landScape();
+        console.log("rendering from FAll")
         activeSquare.render();
 
     }
@@ -291,14 +292,7 @@ function fall() {
 
 function control() {
 
-    // if (blockLocking()) {
-    //     console.log("Setting Collision Timer!!")
-    //     setTimeout(activeSquare.collision, 100);
-    //     landScape();
-    //     activeSquare.render();
-    //   //  activeSquare.control();
-    //     return;
-    // }
+
 
     document.onkeydown = function(event) {
         if (event.keyCode == 39 && activeSquare.active === true) {
@@ -350,20 +344,21 @@ function control() {
             for (var i = 0; i < activeSquare.position.length; i++) {
                 if (activeSquare.position[i].y >= 22) {
                     //console.log("can't move down")
-                    if (blockLocking() && shallPass===true) {
-                        console.log("Setting Collision Timer via Bottom!!")
+                    if (blockLocking() && shallPass === true) {
+                        //console.log("Setting Collision Timer via Bottom!!")
 
                         setTimeout(activeSquare.collision, 200);
-                        shallPass=false;
+                        shallPass = false;
                         landScape();
+                        console.log("rendering from down key")
                         activeSquare.render();
 
                         return;
                     } else {
-                      if( shallPass===true){
-                        console.log("running update inside control based on pos: " + Date())
+                        if (shallPass === true) {
+                            console.log("running update inside control based on pos: " + Date())
 
-                      }
+                        }
                     }
 
                     return;
@@ -382,13 +377,13 @@ function control() {
                             setTimeout(activeSquare.collision, 200);
                             landScape();
                             activeSquare.render();
-                            //activeSquare.control();
+
                             return;
                         } else {
-                          if(shallPass === true){
-                            console.log("running update inside control based on fallen: " + Date())
-                            //setTimeout(update, 10)
-                          }
+                            if (shallPass === true) {
+                                console.log("running update inside control based on fallen: " + Date())
+
+                            }
                         }
 
                         return;
@@ -407,10 +402,11 @@ function control() {
             rotate();
         }
 
-
-
-        landScape();
+        if(activeSquare.shallPass === true){
+          console.log("rendering from bottm of control function")
+          landScape();
         activeSquare.render();
+      }
 
 
     }
@@ -422,10 +418,10 @@ function control() {
         activeSquare.render();
         return;
     } else {
-        if(shallPass === true){
-        console.log("running update from bottom of Control: ")
-        setTimeout(update, 10)
-      }
+        if (shallPass === true) {
+            console.log("running update from bottom of Control: ")
+            setTimeout(update, 10)
+        }
     }
     return;
 
@@ -910,7 +906,6 @@ function blockCreate(shapeType) {
                     (this.position[i].y === 22)) {
                     console.log("The block Le FAILS!")
                     this.active = false;
-                    shallPass = true;
 
                     //appends blocks that are now locked to the falleBlock array
                     for (var k = 0; k < this.position.length; k++) {
@@ -918,32 +913,13 @@ function blockCreate(shapeType) {
                     }
 
                     // resets the block positions
-                    long.position = JSON.parse(JSON.stringify(longPos))
-                    tee.position = JSON.parse(JSON.stringify(teePos))
-                    zig.position = JSON.parse(JSON.stringify(zigPos))
-                    zag.position = JSON.parse(JSON.stringify(zagPos))
-                    square.position = JSON.parse(JSON.stringify(squarePos))
-                    leftLeg.position = JSON.parse(JSON.stringify(leftLegPos))
-                    rightLeg.position = JSON.parse(JSON.stringify(rightLegPos))
-                        // shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
-                        //     JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
-                        //     JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
-                        // ];
-
                     blockClearCheck();
-                    shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
-                        JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
-                        JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
-                    ];
-                    activeSquare = blockCreate(nextShape);
-                    var rando = random7int();
-                    nextShape = shapeArray[rando - 1]
 
                     return this;
                 }
             }
         }
-        shallPass= true;
+        shallPass = true;
         console.log("running update from end of collision")
         setTimeout(update, 10)
 
@@ -988,29 +964,23 @@ function blockLocking() {
 
 //the main game loop
 function update() {
-  //console.log("running update")
+    //console.log("running update")
 
     landScape();
     if (activeSquare.active === true) {
-
         activeSquare.render();
         activeSquare.fall();
         activeSquare.control();
-        // activeSquare.collision();
-        //blockClearCheck();
     } else {
-        console.log("update else")
-            //blockClearCheck();
-            //reset shape function
-        shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
-            JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
-            JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
-        ];
-        activeSquare = blockCreate(nextShape);
-        var rando = random7int();
-        nextShape = shapeArray[rando - 1]
-            //console.log("running update from update")
-            //setTimeout(update, 10)
+        // console.log("update else")
+        // shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
+        //     JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
+        //     JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
+        // ];
+        // activeSquare = blockCreate(nextShape);
+        // var rando = random7int();
+        // nextShape = shapeArray[rando - 1]
+
 
     }
 
@@ -1033,13 +1003,15 @@ function getRandomColor() {
 //paints the line to clear random colors
 function colorClear(index) {
 
+    console.log("WHAT IT DO!!")
+
     for (var j = 0; j < fallenBlocks.length; j++) {
         if (fallenBlocks[j].y === index) {
             ctx.fillStyle = "black";
             ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize, blockSize);
             ctx.fillStyle = getRandomColor();
             ctx.fillRect(fallenBlocks[j].x * blockSize, fallenBlocks[j].y * blockSize, blockSize - 1, blockSize - 1);
-            console.log("WHAT IT DO!!")
+
         }
     }
 
@@ -1049,23 +1021,54 @@ function colorClear(index) {
 //gets rid of the filled line from the fallenblocks
 function clearBlocks(lineArray) {
 
-    for (var i =lineArray.length-1; i>=0; i--){
-      console.log(lineArray[i])
-      fallenBlocks = fallenBlocks.filter(function(item) {
-          return item.y != lineArray[i];
-      })
-      for (var j = 0; j < fallenBlocks.length; j++) {
-          if (fallenBlocks[j].y < lineArray[i]) {
-              fallenBlocks[j].y = fallenBlocks[j].y + 1;
-          }
-      }
+    long.position = JSON.parse(JSON.stringify(longPos))
+    tee.position = JSON.parse(JSON.stringify(teePos))
+    zig.position = JSON.parse(JSON.stringify(zigPos))
+    zag.position = JSON.parse(JSON.stringify(zagPos))
+    square.position = JSON.parse(JSON.stringify(squarePos))
+    leftLeg.position = JSON.parse(JSON.stringify(leftLegPos))
+    rightLeg.position = JSON.parse(JSON.stringify(rightLegPos))
+
+    shapeArray = [JSON.parse(JSON.stringify(tee)), JSON.parse(JSON.stringify(long)),
+        JSON.parse(JSON.stringify(zig)), JSON.parse(JSON.stringify(zag)), JSON.parse(JSON.stringify(rightLeg)),
+        JSON.parse(JSON.stringify(leftLeg)), JSON.parse(JSON.stringify(square))
+    ];
+    activeSquare = blockCreate(nextShape);
+    var rando = random7int();
+    nextShape = shapeArray[rando - 1]
+    shallPass = true;
+
+    if (lineArray != undefined) {
+        for (var i = lineArray.length - 1; i >= 0; i--) {
+            console.log(lineArray[i])
+            fallenBlocks = fallenBlocks.filter(function(item) {
+                return item.y != lineArray[i];
+            })
+            for (var j = 0; j < fallenBlocks.length; j++) {
+                if (fallenBlocks[j].y < lineArray[i]) {
+                    fallenBlocks[j].y = fallenBlocks[j].y + 1;
+                }
+            }
+        }
+    }
+    if (lineArray != undefined) {
+        if (lineArray.length > 0) {
+            console.log("running update after clearBlocks");
+            setTimeout(update, 50);
+            return;
+        }
+    } else {
+        console.log("running update from end of clearBlocks: " + Date());
+        setTimeout(update, 10);
+        console.log("game loop reset");
+        return;
     }
 
 }
 
 //checks to see if the fallenblocks has made a complete line that needs to be cleared
 function blockClearCheck() {
-    console.log("running block Cear check")
+    console.log("running block Clear check")
     var filledLineArray = [];
     for (var i = 22; i >= 0; i--) {
         var count = 0;
@@ -1091,38 +1094,40 @@ function blockClearCheck() {
         setTimeout(colorClear, 800, filledLineArray[k])
         setTimeout(colorClear, 900, filledLineArray[k])
 
-        //get rid of the flashy line
 
 
         //YAY YOU SCORED!!!
-        score = score + 10;
-        if (score>=100){
-          currentSpeed = 85;
-          level = 2;
+        score = score + 10 * filledLineArray.length;
+        linesCleared++;
+        if (linesCleared >= 10) {
+            currentSpeed = 85;
+            level = 2;
         }
-        if (score>=200){
-          currentSpeed = 90;
-          level = 3;
+        if (linesCleared >= 20) {
+            currentSpeed = 90;
+            level = 3;
         }
 
-        if (score>=300){
-          currentSpeed = 95;
-          level =4;
+        if (linesCleared >= 30) {
+            currentSpeed = 95;
+            level = 4;
         }
 
     }
 
-    setTimeout(clearBlocks, 1000, filledLineArray)
+
 
     //redo the game loop!
     if (filledLineArray.length > 0) {
         console.log("running update after filled line");
-        setTimeout(update, 1000);
+        setTimeout(clearBlocks, 1000, filledLineArray)
+            //setTimeout(update, 1000);
         return;
     } else {
-        console.log("running update from end of blockClear: " + Date());
-        setTimeout(update, 100);
-        console.log("game loop reset");
+        setTimeout(clearBlocks, 10);
+        //console.log("running update from end of blockClear: " + Date());
+        //setTimeout(update, 100);
+        //console.log("game loop reset");
         return;
     }
 
